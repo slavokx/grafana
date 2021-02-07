@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+PATH="/usr/share/grafana/bin:$PATH"
+
+
 PERMISSIONS_OK=0
 
 if [ ! -r "$GF_PATHS_CONFIG" ]; then

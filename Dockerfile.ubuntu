@@ -73,5 +73,20 @@ COPY --from=js-builder /usr/src/app/tools tools
 
 COPY packaging/docker/run.sh /
 
-USER grafana
-ENTRYPOINT [ "/run.sh" ]
+#grafana security fix
+ENV TZ=Europe/Berlin
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt-get install -y nginx nginx-extras sudo
+
+RUN unlink /etc/nginx/sites-enabled/default
+COPY nginx/reverse-proxy.conf /etc/nginx/sites-enabled/reverse-proxy.conf
+COPY nginx/start_nginx.sh /
+COPY nginx/custom_404.html /usr/share/nginx/html/custom_404.html
+
+
+#end grafana security fix
+COPY packaging/docker/run.sh /
+
+
+ENTRYPOINT /start_nginx.sh
+
